@@ -1,30 +1,131 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'dart:ui';
+
+import 'package:devnest/task_list.dart' as task;
+import 'package:devnest/task2/task2.dart' as task2;
+import 'package:devnest/task3/task3.dart' as task3;
+
 import 'checklist.dart';
-import 'task_list.dart';
+import 'package:devnest/task3/checklist.dart';
+import 'package:devnest/task2/checklist2.dart';
 
 class ListTy extends StatefulWidget {
-  const ListTy({super.key});
+  final int activeContainer; // Accept activeContainer as a parameter
+
+  const ListTy({super.key, required this.activeContainer});
 
   @override
   _ListTyState createState() => _ListTyState();
 }
 
 class _ListTyState extends State<ListTy> {
-  int currentTaskIndex = 0; // Track the current task index
+  int currentTaskIndex1 = 0; // Track the current task index for task list 1
+  int currentTaskIndex2 = 0; // Track the current task index for task list 2
+  int currentTaskIndex3 = 0; // Track the current task index for task list 3
+  List<dynamic> getCurrentTasks() {
+    switch (widget.activeContainer) {
+      case 1:
+        return task2.tasks2; // Use the tasks for container 1
+      case 2:
+        return task3.tasks3; // Use the tasks for container 2
+      default:
+        return task.tasks; // Default to task 1
+    }
+  }
 
   void handleNextTask() {
     setState(() {
-      // Move to the next task
-      if (currentTaskIndex < tasks.length - 1) {
-        currentTaskIndex++;
+      // Get the current task list dynamically
+      final tasks = getCurrentTasks();
+
+      // Move to the next task if within bounds
+      if (widget.activeContainer == 1 && currentTaskIndex1 < tasks.length - 1) {
+        currentTaskIndex1++;
+      } else if (widget.activeContainer == 2 &&
+          currentTaskIndex2 < tasks.length - 1) {
+        currentTaskIndex2++;
+      } else if (widget.activeContainer == 0 &&
+          currentTaskIndex3 < tasks.length - 1) {
+        currentTaskIndex3++;
       }
     });
   }
 
+  Widget getChecklistWidget() {
+    switch (widget.activeContainer) {
+      case 1:
+        return Checklist2(
+          completedTaskIndex:
+              currentTaskIndex1 - 1, // Track completion independently
+        );
+      case 2:
+        return Checklist3(
+          completedTaskIndex:
+              currentTaskIndex2 - 1, // Track completion independently
+        );
+      default:
+        return Checklist(
+          completedTaskIndex:
+              currentTaskIndex3 - 1, // Track completion independently
+        );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final currentTask = tasks[currentTaskIndex];
+    final tasks = getCurrentTasks(); // Get the current task list
+    final currentTask = tasks.isNotEmpty
+        ? tasks[widget.activeContainer == 1
+            ? currentTaskIndex1
+            : widget.activeContainer == 2
+                ? currentTaskIndex2
+                : currentTaskIndex3]
+        : null;
+    if (currentTask == null) {
+      return Center(child: Text("No tasks available"));
+    }
+
+    const themeimage = [
+      {
+        "img": "assets/images/update.png",
+      },
+      {
+        "img": "assets/images/update3.png",
+      },
+      {
+        "img": "assets/images/update2.png",
+      }
+    ];
+    final selectedimgs = themeimage[widget.activeContainer];
+    final selectedimg = selectedimgs["img"] as String;
+
+    const colourTheme = [
+      {
+        "bg": Color(0xff222A39),
+        "text": Color(0xffA8BBD6),
+        "subtext": Color(0xffA8BBD6),
+        "primary": Color(0xff5C61A9),
+        "secondary": Color(0xff9CA3AF),
+      },
+      {
+        "bg": Color(0xff272C48),
+        "text": Color(0xffD1D4FF),
+        "subtext": Color(0xffC0C6D6),
+        "primary": Color(0xff686FBB),
+        "secondary": Color(0xffF3F4F6),
+      },
+      {
+        "bg": Color(0xff27333E),
+        "text": Color(0xffEBFDFF),
+        "subtext": Color(0xffAABAC6),
+        "primary": Color(0xff5AA7A7),
+        "secondary": Color(0xff8492A6),
+      },
+    ];
+    final selectedColours = colourTheme[widget.activeContainer];
+    final bgColor = selectedColours["bg"];
+    final textColor = selectedColours["text"];
+    // final primaryColor = selectedColours["primary"];
 
     return Expanded(
       child: Row(
@@ -38,14 +139,13 @@ class _ListTyState extends State<ListTy> {
                   topLeft: Radius.circular(12),
                   bottomLeft: Radius.circular(12),
                 ),
-                color: const Color.fromARGB(255, 34, 42, 57),
+                color: bgColor,
               ),
+              height: double.infinity,
               child: Padding(
                 padding: const EdgeInsets.only(top: 25, left: 25, bottom: 30),
                 child: SingleChildScrollView(
-                  child: Checklist(
-                    completedTaskIndex: currentTaskIndex - 1, // Pass the last completed task
-                  ),
+                  child: getChecklistWidget(),
                 ),
               ),
             ),
@@ -83,20 +183,33 @@ class _ListTyState extends State<ListTy> {
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 30, horizontal: 40),
-                    child: Text(
-                      currentTask.title,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 26,
-                      ),
-                    ),
-                  ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          currentTask.name,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 26,
+                              fontWeight: FontWeight.w600),
+                        ),
+                        SizedBox(height: 12),
+                        // Text(
+                        //   currentTask.description,
+                        //   style: TextStyle(
+                        //       color: const Color.fromARGB(255, 202, 202, 202),
+                        //       fontSize: 16,
+                        //       fontWeight: FontWeight.w300),
+                        // ),
 
-                  // Task illustration
-                  Center(
-                    child: Image.asset(
-                      "assets/images/update.png",
-                      width: 300,
+                        // Task illustration
+                        Center(
+                          child: Image.asset(
+                            selectedimg,
+                            width: 300,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
 
@@ -111,11 +224,11 @@ class _ListTyState extends State<ListTy> {
                         children: [
                           TextButton(
                             style: ButtonStyle(
-                              padding: MaterialStateProperty.all(
+                              padding: WidgetStateProperty.all(
                                 EdgeInsets.symmetric(
                                     vertical: 15, horizontal: 30),
                               ),
-                              shape: MaterialStateProperty.all(
+                              shape: WidgetStateProperty.all(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                   side: BorderSide(
@@ -135,14 +248,14 @@ class _ListTyState extends State<ListTy> {
                           SizedBox(width: 16),
                           TextButton(
                             style: ButtonStyle(
-                              padding: MaterialStateProperty.all(
+                              padding: WidgetStateProperty.all(
                                 EdgeInsets.symmetric(
                                     vertical: 15, horizontal: 30),
                               ),
-                              backgroundColor: MaterialStateProperty.all(
-                                const Color.fromARGB(255, 255, 255, 255),
+                              backgroundColor: WidgetStateProperty.all(
+                                textColor,
                               ),
-                              shape: MaterialStateProperty.all(
+                              shape: WidgetStateProperty.all(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),

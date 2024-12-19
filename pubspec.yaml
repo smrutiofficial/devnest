@@ -61,6 +61,8 @@ flutter:
   assets:
     - assets/images/dribbble_narrow_lane.png
     - assets/images/update.png
+    - assets/images/update2.png
+    - assets/images/update3.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

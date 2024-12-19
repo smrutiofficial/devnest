@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'task_list.dart';
+import 'task3.dart';
 
-class Checklist extends StatelessWidget {
+class Checklist3 extends StatelessWidget {
   final int completedTaskIndex;
 
-  const Checklist({super.key, required this.completedTaskIndex});
+  const Checklist3({super.key, required this.completedTaskIndex});
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: tasks.length,
+      itemCount: tasks3.length,
       itemBuilder: (context, index) {
-        final task = tasks[index];
+        final task = tasks3[index];
         final isCompleted = index <= completedTaskIndex; // Completed up to the current index - 1
 
         return ListTile(
