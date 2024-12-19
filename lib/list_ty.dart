@@ -56,24 +56,24 @@ class _ListTyState extends State<ListTy> {
       case 1:
         return Checklist2(
           completedTaskIndex:
-              currentTaskIndex1 - 1, // Track completion independently
+              currentTaskIndex1 - 1,
         );
       case 2:
         return Checklist3(
           completedTaskIndex:
-              currentTaskIndex2 - 1, // Track completion independently
+              currentTaskIndex2 - 1,
         );
       default:
         return Checklist(
           completedTaskIndex:
-              currentTaskIndex3 - 1, // Track completion independently
+              currentTaskIndex3 - 1,
         );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final tasks = getCurrentTasks(); // Get the current task list
+    final tasks = getCurrentTasks(); 
     final currentTask = tasks.isNotEmpty
         ? tasks[widget.activeContainer == 1
             ? currentTaskIndex1
