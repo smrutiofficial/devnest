@@ -36,26 +36,29 @@ class _ListTyState extends State<ListTy> {
     }
   }
 
+  String processStatus = "none";
   void handleNextTask() async {
     // Get the current task list dynamically
     final tasks = getCurrentTasks();
 
     try {
-    //   final result = await Process.run('bash', [
-    //   '-c',
-    //   'sleep 5; echo hello; exit 0' // Your Bash script here
-    // ]);
-     // Open GNOME terminal and wait for the command to finish
-    final result = await Process.run('gnome-terminal', [
-      '--wait', // Wait for the command to finish
-      '--',
-      'bash',
-      '-c',
-      'sleep 5; echo hello; exit 0' // Your Bash script here
-    ]);
+      setState(() {
+        processStatus = "processing";
+      });
+      // Open GNOME terminal and wait for the command to finish
+      final result = await Process.run('gnome-terminal', [
+        '--wait', // Wait for the command to finish
+        '--',
+        'bash',
+        '-c',
+        'sleep 5; echo hello; exit 0' // Your Bash script here
+      ]);
 
       // Check if the process completed successfully
       if (result.exitCode == 0) {
+        setState(() {
+          processStatus = "finish";
+        });
         // Execute setState only after the terminal command completes
         setState(() {
           if (widget.activeContainer == 1 &&
@@ -70,12 +73,17 @@ class _ListTyState extends State<ListTy> {
           }
         });
       } else {
-        print(
-            "Error: Terminal command failed with exit code ${result.exitCode}");
+        // Handle error if the command fails
+        setState(() {
+          processStatus =
+              "cerror"; // You can set this to a specific error state if desired
+        });
       }
     } catch (e) {
-      // Handle errors gracefully
-      print("An error occurred: $e");
+      // Handle exceptions gracefully
+      setState(() {
+        processStatus = "error"; // Handle errors after the process fails
+      });
     }
   }
 
@@ -195,6 +203,7 @@ class _ListTyState extends State<ListTy> {
                   currentTaskdes: currentTaskdes,
                   selectedimg: selectedimg,
                   textColor: textColor,
+                  processStatus:processStatus,
                   handleNextTask: handleNextTask),
               // ----------------------------------------------
               // ====================================================

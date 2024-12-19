@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 class Containt extends StatelessWidget {
   final String currentTaskName;
   final String currentTaskdes;
+  final String processStatus;
   final String selectedimg;
   final Color textColor;
   final VoidCallback handleNextTask;
@@ -13,6 +14,7 @@ class Containt extends StatelessWidget {
     super.key,
     required this.currentTaskName,
     required this.currentTaskdes,
+    required this.processStatus,
     required this.selectedimg,
     required this.textColor,
     required this.handleNextTask,
@@ -34,7 +36,7 @@ class Containt extends StatelessWidget {
           ),
         ),
         BackdropFilter(
-          filter:ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+          filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
           child: Container(
             color: const Color.fromARGB(100, 21, 28, 38),
           ),
@@ -45,31 +47,54 @@ class Containt extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 40),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                currentTaskName,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 26,
-                  fontWeight: FontWeight.w600,
+              // Outer Visibility: Controls visibility of the whole task information
+              Visibility(
+                visible: processStatus == "none" || processStatus == "finish",
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      currentTaskName,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 26,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      currentTaskdes,
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 202, 202, 202),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(height: 12),
-                   Text(
-                currentTaskdes,
-                style: TextStyle(
-                  color: const Color.fromARGB(255, 202, 202, 202),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w300,
+              // Inner Visibility: Controls visibility of the image when processing
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Other Widgets...
+                    Visibility(
+                      visible: processStatus == "processing",
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Image.asset(
+                          selectedimg,
+                          width: 300,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              // Task illustration
-              // Center(
-              //   child: Image.asset(
-              //     selectedimg,
-              //     width: 300,
-              //   ),
-              // ),
+              )
             ],
           ),
         ),
@@ -103,27 +128,30 @@ class Containt extends StatelessWidget {
                 //     style: TextStyle(color: Colors.white, fontSize: 18),
                 //   ),
                 // ),
-                SizedBox(width: 16),
-                TextButton(
-                  style: ButtonStyle(
-                    padding: WidgetStateProperty.all(
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                    ),
-                    backgroundColor: WidgetStateProperty.all(
-                      textColor,
-                    ),
-                    shape: WidgetStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                // SizedBox(width: 16),
+                Visibility(
+                  visible: processStatus == "none" || processStatus == "finish",
+                  child: TextButton(
+                    style: ButtonStyle(
+                      padding: WidgetStateProperty.all(
+                        EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                      ),
+                      backgroundColor: WidgetStateProperty.all(
+                        textColor,
+                      ),
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                     ),
-                  ),
-                  onPressed: handleNextTask,
-                  child: Text(
-                    "Install",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
+                    onPressed: handleNextTask,
+                    child: Text(
+                      "Install",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                      ),
                     ),
                   ),
                 ),
