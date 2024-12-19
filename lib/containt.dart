@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class Containt extends StatelessWidget {
   final String currentTaskName;
+  final String currentTaskdes;
   final String selectedimg;
   final Color textColor;
   final VoidCallback handleNextTask;
@@ -11,6 +12,7 @@ class Containt extends StatelessWidget {
   const Containt({
     super.key,
     required this.currentTaskName,
+    required this.currentTaskdes,
     required this.selectedimg,
     required this.textColor,
     required this.handleNextTask,
@@ -53,14 +55,21 @@ class Containt extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 12),
-
-              // Task illustration
-              Center(
-                child: Image.asset(
-                  selectedimg,
-                  width: 300,
+                   Text(
+                currentTaskdes,
+                style: TextStyle(
+                  color: const Color.fromARGB(255, 202, 202, 202),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w300,
                 ),
               ),
+              // Task illustration
+              // Center(
+              //   child: Image.asset(
+              //     selectedimg,
+              //     width: 300,
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -73,27 +82,27 @@ class Containt extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextButton(
-                  style: ButtonStyle(
-                    padding: WidgetStateProperty.all(
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                    ),
-                    shape: WidgetStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        side: BorderSide(
-                          color: Colors.white,
-                          width: 2,
-                        ),
-                      ),
-                    ),
-                  ),
-                  onPressed: handleNextTask,
-                  child: Text(
-                    "Skip",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
-                ),
+                // TextButton(
+                //   style: ButtonStyle(
+                //     padding: WidgetStateProperty.all(
+                //       EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                //     ),
+                //     shape: WidgetStateProperty.all(
+                //       RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(8),
+                //         side: BorderSide(
+                //           color: Colors.white,
+                //           width: 2,
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                //   onPressed: handleNextTask,
+                //   child: Text(
+                //     "Skip",
+                //     style: TextStyle(color: Colors.white, fontSize: 18),
+                //   ),
+                // ),
                 SizedBox(width: 16),
                 TextButton(
                   style: ButtonStyle(

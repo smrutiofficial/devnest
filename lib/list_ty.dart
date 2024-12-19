@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
@@ -34,22 +36,47 @@ class _ListTyState extends State<ListTy> {
     }
   }
 
-  void handleNextTask() {
-    setState(() {
-      // Get the current task list dynamically
-      final tasks = getCurrentTasks();
+  void handleNextTask() async {
+    // Get the current task list dynamically
+    final tasks = getCurrentTasks();
 
-      // Move to the next task if within bounds
-      if (widget.activeContainer == 1 && currentTaskIndex1 < tasks.length - 1) {
-        currentTaskIndex1++;
-      } else if (widget.activeContainer == 2 &&
-          currentTaskIndex2 < tasks.length - 1) {
-        currentTaskIndex2++;
-      } else if (widget.activeContainer == 0 &&
-          currentTaskIndex3 < tasks.length - 1) {
-        currentTaskIndex3++;
+    try {
+    //   final result = await Process.run('bash', [
+    //   '-c',
+    //   'sleep 5; echo hello; exit 0' // Your Bash script here
+    // ]);
+     // Open GNOME terminal and wait for the command to finish
+    final result = await Process.run('gnome-terminal', [
+      '--wait', // Wait for the command to finish
+      '--',
+      'bash',
+      '-c',
+      'sleep 5; echo hello; exit 0' // Your Bash script here
+    ]);
+
+      // Check if the process completed successfully
+      if (result.exitCode == 0) {
+        // Execute setState only after the terminal command completes
+        setState(() {
+          if (widget.activeContainer == 1 &&
+              currentTaskIndex1 < tasks.length - 1) {
+            currentTaskIndex1++;
+          } else if (widget.activeContainer == 2 &&
+              currentTaskIndex2 < tasks.length - 1) {
+            currentTaskIndex2++;
+          } else if (widget.activeContainer == 0 &&
+              currentTaskIndex3 < tasks.length - 1) {
+            currentTaskIndex3++;
+          }
+        });
+      } else {
+        print(
+            "Error: Terminal command failed with exit code ${result.exitCode}");
       }
-    });
+    } catch (e) {
+      // Handle errors gracefully
+      print("An error occurred: $e");
+    }
   }
 
   Widget getChecklistWidget() {
@@ -84,6 +111,7 @@ class _ListTyState extends State<ListTy> {
       return Center(child: Text("No tasks available"));
     }
     final currentTaskName = currentTask.name;
+    final currentTaskdes = currentTask.description;
     const themeimage = [
       {
         "img": "assets/images/update.png",
@@ -164,6 +192,7 @@ class _ListTyState extends State<ListTy> {
               // -------------------------------------------------------------
               child: Containt(
                   currentTaskName: currentTaskName,
+                  currentTaskdes: currentTaskdes,
                   selectedimg: selectedimg,
                   textColor: textColor,
                   handleNextTask: handleNextTask),
