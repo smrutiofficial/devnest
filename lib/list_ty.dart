@@ -8,6 +8,7 @@ import 'package:devnest/task3/task3.dart' as task3;
 import 'checklist.dart';
 import 'package:devnest/task3/checklist.dart';
 import 'package:devnest/task2/checklist2.dart';
+import 'package:devnest/containt.dart';
 
 class ListTy extends StatefulWidget {
   final int activeContainer; // Accept activeContainer as a parameter
@@ -55,25 +56,22 @@ class _ListTyState extends State<ListTy> {
     switch (widget.activeContainer) {
       case 1:
         return Checklist2(
-          completedTaskIndex:
-              currentTaskIndex1 - 1,
+          completedTaskIndex: currentTaskIndex1 - 1,
         );
       case 2:
         return Checklist3(
-          completedTaskIndex:
-              currentTaskIndex2 - 1,
+          completedTaskIndex: currentTaskIndex2 - 1,
         );
       default:
         return Checklist(
-          completedTaskIndex:
-              currentTaskIndex3 - 1,
+          completedTaskIndex: currentTaskIndex3 - 1,
         );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final tasks = getCurrentTasks(); 
+    final tasks = getCurrentTasks();
     final currentTask = tasks.isNotEmpty
         ? tasks[widget.activeContainer == 1
             ? currentTaskIndex1
@@ -81,10 +79,11 @@ class _ListTyState extends State<ListTy> {
                 ? currentTaskIndex2
                 : currentTaskIndex3]
         : null;
+
     if (currentTask == null) {
       return Center(child: Text("No tasks available"));
     }
-
+    final currentTaskName = currentTask.name;
     const themeimage = [
       {
         "img": "assets/images/update.png",
@@ -124,7 +123,7 @@ class _ListTyState extends State<ListTy> {
     ];
     final selectedColours = colourTheme[widget.activeContainer];
     final bgColor = selectedColours["bg"];
-    final textColor = selectedColours["text"];
+    final textColor = selectedColours["text"] ?? Colors.white;
     // final primaryColor = selectedColours["primary"];
 
     return Expanded(
@@ -159,123 +158,18 @@ class _ListTyState extends State<ListTy> {
                 topRight: Radius.circular(12),
                 bottomRight: Radius.circular(12),
               ),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  // Background image
-                  Opacity(
-                    opacity: 0.5,
-                    child: Image.asset(
-                      "assets/images/dribbble_narrow_lane.png",
-                      width: double.infinity,
-                      height: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-                    child: Container(
-                      color: const Color.fromARGB(100, 21, 28, 38),
-                    ),
-                  ),
 
-                  // Task title
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 30, horizontal: 40),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          currentTask.name,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 26,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        SizedBox(height: 12),
-                        // Text(
-                        //   currentTask.description,
-                        //   style: TextStyle(
-                        //       color: const Color.fromARGB(255, 202, 202, 202),
-                        //       fontSize: 16,
-                        //       fontWeight: FontWeight.w300),
-                        // ),
-
-                        // Task illustration
-                        Center(
-                          child: Image.asset(
-                            selectedimg,
-                            width: 300,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Action buttons
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 20, horizontal: 30),
-                    child: Container(
-                      alignment: Alignment.bottomRight,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            style: ButtonStyle(
-                              padding: WidgetStateProperty.all(
-                                EdgeInsets.symmetric(
-                                    vertical: 15, horizontal: 30),
-                              ),
-                              shape: WidgetStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  side: BorderSide(
-                                    color: Colors.white,
-                                    width: 2,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            onPressed: handleNextTask,
-                            child: Text(
-                              "Skip",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
-                            ),
-                          ),
-                          SizedBox(width: 16),
-                          TextButton(
-                            style: ButtonStyle(
-                              padding: WidgetStateProperty.all(
-                                EdgeInsets.symmetric(
-                                    vertical: 15, horizontal: 30),
-                              ),
-                              backgroundColor: WidgetStateProperty.all(
-                                textColor,
-                              ),
-                              shape: WidgetStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                            ),
-                            onPressed: handleNextTask,
-                            child: Text(
-                              "Install",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
+              // ----------------------------------------------
+              // ====================================================
+              // -------------------------------------------------------------
+              child: Containt(
+                  currentTaskName: currentTaskName,
+                  selectedimg: selectedimg,
+                  textColor: textColor,
+                  handleNextTask: handleNextTask),
+              // ----------------------------------------------
+              // ====================================================
+              // -------------------------------------------------------------
             ),
           ),
         ],
