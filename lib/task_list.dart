@@ -14,12 +14,12 @@ class Task {
 final List<Task> tasks = [
   Task(
     name: 'System Update',
-    command: 'sudo apt update && sudo apt upgrade',
-    description: 'Updates all packages to their latest versions.',
+    command: 'echo system update;sleep 5;exit 0',
+    description: 'The system downloads metadata about available software from repositories, updates the local package cache, checks for newer versions of installed packages, prepares the system to identify available updates, compares installed packages with available updates, downloads and installs newer versions of existing packages, ensures compatibility by resolving dependencies without removing packages, and applies security patches and bug fixes for installed software.',
   ),
   Task(
     name: 'APT Apps Install',
-    command: 'sudo apt install <app-name>',
+    command: 'echo apt installing;sleep 5;exit 0',
     description: 'Installs applications using the APT package manager.',
   ),
   Task(

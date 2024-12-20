@@ -41,6 +41,16 @@ class _ListTyState extends State<ListTy> {
     // Get the current task list dynamically
     final tasks = getCurrentTasks();
 
+    // Ensure there is a current task to execute
+    if (tasks.isEmpty) return;
+
+    // Determine the current task based on the active container and task index
+    final currentTask = (widget.activeContainer == 1)
+        ? tasks[currentTaskIndex1]
+        : (widget.activeContainer == 2)
+            ? tasks[currentTaskIndex2]
+            : tasks[currentTaskIndex3];
+
     try {
       setState(() {
         processStatus = "processing";
@@ -51,7 +61,7 @@ class _ListTyState extends State<ListTy> {
         '--',
         'bash',
         '-c',
-        'sleep 5; echo hello; exit 0' // Your Bash script here
+        currentTask.command,
       ]);
 
       // Check if the process completed successfully
@@ -203,7 +213,7 @@ class _ListTyState extends State<ListTy> {
                   currentTaskdes: currentTaskdes,
                   selectedimg: selectedimg,
                   textColor: textColor,
-                  processStatus:processStatus,
+                  processStatus: processStatus,
                   handleNextTask: handleNextTask),
               // ----------------------------------------------
               // ====================================================

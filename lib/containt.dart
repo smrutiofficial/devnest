@@ -67,9 +67,9 @@ class Containt extends StatelessWidget {
                     Text(
                       currentTaskdes,
                       style: TextStyle(
-                        color: const Color.fromARGB(255, 202, 202, 202),
+                        color: const Color(0xff808b9e),
                         fontSize: 16,
-                        fontWeight: FontWeight.w300,
+                        fontWeight: FontWeight.w100,
                       ),
                     ),
                   ],
