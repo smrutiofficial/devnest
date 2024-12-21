@@ -16,6 +16,7 @@ class Conter extends StatefulWidget {
 }
 
 class _ConterState extends State<Conter> {
+  String processStatus = "none";
   // Get the title text based on the active container
   String getTitleText() {
     switch (widget.activeContainer) {
@@ -26,6 +27,13 @@ class _ConterState extends State<Conter> {
       default:
         return "System Setup & Config.";
     }
+  }
+
+  // Callback to handle processStatus changes from ListTy
+  void handleProcessStatusChange(String status) {
+    setState(() {
+      processStatus = status;
+    });
   }
 
   @override
@@ -48,7 +56,7 @@ class _ConterState extends State<Conter> {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  "Ubuntu Dev Setup",
+                  "Linux Dev Setup",
                   style: TextStyle(
                     color: const Color.fromARGB(255, 230, 237, 248),
                     fontSize: 34,
@@ -69,7 +77,10 @@ class _ConterState extends State<Conter> {
           ],
         ),
         SizedBox(height: 32),
-        ListTy(activeContainer: widget.activeContainer),
+        ListTy(
+          activeContainer: widget.activeContainer,
+          onProcessStatusChange: handleProcessStatusChange,
+        ),
       ],
     );
   }
@@ -79,7 +90,12 @@ class _ConterState extends State<Conter> {
 
     return GestureDetector(
       onTap: () {
-        widget.onContainerChange(index); // Notify parent about the change
+        setState(() {
+          widget.onContainerChange(index); // Notify parent about the change
+          processStatus = "none"; // Reset processStatus to "none"
+        });
+        // widget.onContainerChange(index); // Notify parent about the change
+        // processStatus="none";
       },
       child: AnimatedContainer(
         width: 180,

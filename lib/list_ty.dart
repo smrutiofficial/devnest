@@ -14,17 +14,36 @@ import 'package:devnest/containt.dart';
 
 class ListTy extends StatefulWidget {
   final int activeContainer; // Accept activeContainer as a parameter
+  final ValueChanged<String> onProcessStatusChange;
 
-  const ListTy({super.key, required this.activeContainer});
+  const ListTy({
+    super.key,
+    required this.activeContainer,
+    required this.onProcessStatusChange,
+  });
 
   @override
   _ListTyState createState() => _ListTyState();
 }
 
 class _ListTyState extends State<ListTy> {
-  int currentTaskIndex1 = 0; // Track the current task index for task list 1
-  int currentTaskIndex2 = 0; // Track the current task index for task list 2
-  int currentTaskIndex3 = 0; // Track the current task index for task list 3
+  int currentTaskIndex1 = 0;
+  int currentTaskIndex2 = 0;
+  int currentTaskIndex3 = 0;
+
+  bool isFirstComplte = false;
+  bool isSecComplte = false;
+  bool isTrairdComplte = false;
+
+  String processStatus = "none";
+
+  void updateProcessStatus(String status) {
+    setState(() {
+      processStatus = status;
+    });
+    widget.onProcessStatusChange(status); // Notify parent of status change
+  }
+
   List<dynamic> getCurrentTasks() {
     switch (widget.activeContainer) {
       case 1:
@@ -36,7 +55,8 @@ class _ListTyState extends State<ListTy> {
     }
   }
 
-  String processStatus = "none";
+  // =============================================
+
   void handleNextTask() async {
     // Get the current task list dynamically
     final tasks = getCurrentTasks();
@@ -45,71 +65,103 @@ class _ListTyState extends State<ListTy> {
     if (tasks.isEmpty) return;
 
     // Determine the current task based on the active container and task index
-    final currentTask = (widget.activeContainer == 1)
-        ? tasks[currentTaskIndex1]
-        : (widget.activeContainer == 2)
-            ? tasks[currentTaskIndex2]
-            : tasks[currentTaskIndex3];
+    // final currentTask = (widget.activeContainer == 1)
+    //     ? tasks[currentTaskIndex1]
+    //     : (widget.activeContainer == 2)
+    //         ? tasks[currentTaskIndex2]
+    //         : tasks[currentTaskIndex3];
 
     try {
-      setState(() {
-        processStatus = "processing";
-      });
+      // setState(() {
+        updateProcessStatus("processing");
+        // processStatus = "processing";
+      // });
       // Open GNOME terminal and wait for the command to finish
       final result = await Process.run('gnome-terminal', [
         '--wait', // Wait for the command to finish
         '--',
         'bash',
         '-c',
-        currentTask.command,
+        'echo updateed ; sleep 1; exit 0',
       ]);
 
       // Check if the process completed successfully
       if (result.exitCode == 0) {
-        setState(() {
-          processStatus = "finish";
-        });
+        // setState(() {
+          // processStatus = "finish";
+          updateProcessStatus("finish");
+        // });
         // Execute setState only after the terminal command completes
         setState(() {
-          if (widget.activeContainer == 1 &&
+          // print(widget.activeContainer);
+          if (widget.activeContainer == 0 &&
               currentTaskIndex1 < tasks.length - 1) {
             currentTaskIndex1++;
-          } else if (widget.activeContainer == 2 &&
+            // print("c1");
+          } else if (widget.activeContainer == 1 &&
               currentTaskIndex2 < tasks.length - 1) {
             currentTaskIndex2++;
-          } else if (widget.activeContainer == 0 &&
+            // print("c2");
+          } else if (widget.activeContainer == 2 &&
               currentTaskIndex3 < tasks.length - 1) {
             currentTaskIndex3++;
+            // print("c3");
+          } else {
+            updateProcessStatus("finish");
+            // processStatus = "finish";
+            // Ensure the last task is marked as completed
+            if (widget.activeContainer == 1) {
+              currentTaskIndex2 = tasks.length - 1;
+              isSecComplte = true;
+              // print(isFirstComplte);
+            } else if (widget.activeContainer == 2) {
+              currentTaskIndex3 = tasks.length - 1;
+              isTrairdComplte = true;
+              // print(isSecComplte);
+            } else {
+              currentTaskIndex1 = tasks.length - 1;
+              isFirstComplte = true;
+              // print(isTrairdComplte);
+            }
           }
         });
+        // print(isFirstComplte);
+        // print(isTrairdComplte);
+        // print(isTrairdComplte);
       } else {
-        // Handle error if the command fails
         setState(() {
-          processStatus =
-              "cerror"; // You can set this to a specific error state if desired
+          processStatus = "cerror";
         });
       }
     } catch (e) {
       // Handle exceptions gracefully
       setState(() {
-        processStatus = "error"; // Handle errors after the process fails
+        processStatus = "error";
       });
     }
   }
+
+  // =============================================
 
   Widget getChecklistWidget() {
     switch (widget.activeContainer) {
       case 1:
         return Checklist2(
-          completedTaskIndex: currentTaskIndex1 - 1,
+          completedTaskIndex: currentTaskIndex2 - 1,
+          processStatus: processStatus,
+          isSecComplte: isSecComplte,
         );
       case 2:
         return Checklist3(
-          completedTaskIndex: currentTaskIndex2 - 1,
+          completedTaskIndex: currentTaskIndex3 - 1,
+          processStatus: processStatus,
+          isTrairdComplte: isTrairdComplte,
         );
       default:
         return Checklist(
-          completedTaskIndex: currentTaskIndex3 - 1,
+          completedTaskIndex: currentTaskIndex1 - 1,
+          processStatus: processStatus,
+          isFirstComplte: isFirstComplte,
         );
     }
   }
@@ -214,6 +266,7 @@ class _ListTyState extends State<ListTy> {
                   selectedimg: selectedimg,
                   textColor: textColor,
                   processStatus: processStatus,
+                  activeContainer: widget.activeContainer,
                   handleNextTask: handleNextTask),
               // ----------------------------------------------
               // ====================================================

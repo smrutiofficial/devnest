@@ -8,6 +8,7 @@ class Containt extends StatelessWidget {
   final String processStatus;
   final String selectedimg;
   final Color textColor;
+  final int activeContainer;
   final VoidCallback handleNextTask;
 
   const Containt({
@@ -17,6 +18,7 @@ class Containt extends StatelessWidget {
     required this.processStatus,
     required this.selectedimg,
     required this.textColor,
+    required this.activeContainer,
     required this.handleNextTask,
   });
 
@@ -92,6 +94,25 @@ class Containt extends StatelessWidget {
                         ),
                       ),
                     ),
+                    Visibility(
+                      visible: processStatus == "processing",
+                      child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Hang tight, we’re updating things for you!",
+                            style: TextStyle(color: Colors.white, fontSize: 26),
+                          )),
+                    ),
+                    Visibility(
+                      visible:
+                          processStatus == "finished_all",
+                      child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Your Setup env. is now Complete !",
+                            style: TextStyle(color: Colors.white, fontSize: 26),
+                          )),
+                    ),
                   ],
                 ),
               )
@@ -149,7 +170,7 @@ class Containt extends StatelessWidget {
                     child: Text(
                       "Install",
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.white,
                         fontSize: 18,
                       ),
                     ),
