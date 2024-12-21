@@ -10,6 +10,9 @@ class Containt extends StatelessWidget {
   final Color textColor;
   final int activeContainer;
   final VoidCallback handleNextTask;
+  final bool isFirstComplte;
+  final bool isSecComplte;
+  final bool isTrairdComplte;
 
   const Containt({
     super.key,
@@ -20,10 +23,35 @@ class Containt extends StatelessWidget {
     required this.textColor,
     required this.activeContainer,
     required this.handleNextTask,
+    required this.isFirstComplte,
+    required this.isSecComplte,
+    required this.isTrairdComplte,
   });
 
   @override
   Widget build(BuildContext context) {
+    var showcont = false;
+    if (processStatus == "none" || processStatus == "finish") {
+      if (activeContainer == 0 && !isFirstComplte) {
+        showcont = true;
+        // Logic for activeContainer 0 when isFirstComplete is false
+      } else if (activeContainer == 1 && !isSecComplte) {
+        showcont = true;
+        // Logic for activeContainer 1 when isSecComplete is false
+      } else if (activeContainer == 2 && !isTrairdComplte) {
+        showcont = true;
+        // Logic for activeContainer 2 when isThirdComplete is false
+      } else {
+        showcont = false;
+        // Logic for when none of the above conditions are met
+      }
+    } else {
+      showcont = true;
+      // Logic for when processStatus is not "none" or "finish"
+    }
+
+    print(showcont);
+
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -53,7 +81,7 @@ class Containt extends StatelessWidget {
             children: [
               // Outer Visibility: Controls visibility of the whole task information
               Visibility(
-                visible: processStatus == "none" || processStatus == "finish",
+                visible: showcont && processStatus != "processing",
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -104,8 +132,7 @@ class Containt extends StatelessWidget {
                           )),
                     ),
                     Visibility(
-                      visible:
-                          processStatus == "finished_all",
+                      visible: !showcont,
                       child: Align(
                           alignment: Alignment.center,
                           child: Text(
@@ -151,7 +178,7 @@ class Containt extends StatelessWidget {
                 // ),
                 // SizedBox(width: 16),
                 Visibility(
-                  visible: processStatus == "none" || processStatus == "finish",
+                  visible: showcont,
                   child: TextButton(
                     style: ButtonStyle(
                       padding: WidgetStateProperty.all(

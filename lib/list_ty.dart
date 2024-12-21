@@ -171,10 +171,10 @@ class _ListTyState extends State<ListTy> {
     final tasks = getCurrentTasks();
     final currentTask = tasks.isNotEmpty
         ? tasks[widget.activeContainer == 1
-            ? currentTaskIndex1
+            ? currentTaskIndex2
             : widget.activeContainer == 2
-                ? currentTaskIndex2
-                : currentTaskIndex3]
+                ? currentTaskIndex3
+                : currentTaskIndex1]
         : null;
 
     if (currentTask == null) {
@@ -267,6 +267,9 @@ class _ListTyState extends State<ListTy> {
                   textColor: textColor,
                   processStatus: processStatus,
                   activeContainer: widget.activeContainer,
+                  isFirstComplte:isFirstComplte,
+                  isSecComplte:isSecComplte,
+                  isTrairdComplte:isTrairdComplte,
                   handleNextTask: handleNextTask),
               // ----------------------------------------------
               // ====================================================
