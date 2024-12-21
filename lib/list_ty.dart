@@ -15,11 +15,13 @@ import 'package:devnest/containt.dart';
 class ListTy extends StatefulWidget {
   final int activeContainer; // Accept activeContainer as a parameter
   final ValueChanged<String> onProcessStatusChange;
+  final ValueChanged<int> updateContainerChange;
 
   const ListTy({
     super.key,
     required this.activeContainer,
     required this.onProcessStatusChange,
+    required this.updateContainerChange,
   });
 
   @override
@@ -42,6 +44,13 @@ class _ListTyState extends State<ListTy> {
       processStatus = status;
     });
     widget.onProcessStatusChange(status); // Notify parent of status change
+  }
+
+  void updateContainerChange(int index) {
+    setState(() {
+      processStatus = "none"; // Reset processStatus
+      widget.updateContainerChange(index); // Notify parent about the change
+    });
   }
 
   List<dynamic> getCurrentTasks() {
@@ -73,8 +82,8 @@ class _ListTyState extends State<ListTy> {
 
     try {
       // setState(() {
-        updateProcessStatus("processing");
-        // processStatus = "processing";
+      updateProcessStatus("processing");
+      // processStatus = "processing";
       // });
       // Open GNOME terminal and wait for the command to finish
       final result = await Process.run('gnome-terminal', [
@@ -88,8 +97,8 @@ class _ListTyState extends State<ListTy> {
       // Check if the process completed successfully
       if (result.exitCode == 0) {
         // setState(() {
-          // processStatus = "finish";
-          updateProcessStatus("finish");
+        // processStatus = "finish";
+        updateProcessStatus("finish");
         // });
         // Execute setState only after the terminal command completes
         setState(() {
@@ -113,6 +122,10 @@ class _ListTyState extends State<ListTy> {
             if (widget.activeContainer == 1) {
               currentTaskIndex2 = tasks.length - 1;
               isSecComplte = true;
+              // Wait for 5 seconds before calling updateContainerChange
+              Future.delayed(Duration(seconds: 5), () {
+                updateContainerChange(widget.activeContainer + 1);
+              });
               // print(isFirstComplte);
             } else if (widget.activeContainer == 2) {
               currentTaskIndex3 = tasks.length - 1;
@@ -121,6 +134,10 @@ class _ListTyState extends State<ListTy> {
             } else {
               currentTaskIndex1 = tasks.length - 1;
               isFirstComplte = true;
+              // Wait for 5 seconds before calling updateContainerChange
+              Future.delayed(Duration(seconds: 5), () {
+                updateContainerChange(widget.activeContainer + 1);
+              });
               // print(isTrairdComplte);
             }
           }
@@ -267,9 +284,9 @@ class _ListTyState extends State<ListTy> {
                   textColor: textColor,
                   processStatus: processStatus,
                   activeContainer: widget.activeContainer,
-                  isFirstComplte:isFirstComplte,
-                  isSecComplte:isSecComplte,
-                  isTrairdComplte:isTrairdComplte,
+                  isFirstComplte: isFirstComplte,
+                  isSecComplte: isSecComplte,
+                  isTrairdComplte: isTrairdComplte,
                   handleNextTask: handleNextTask),
               // ----------------------------------------------
               // ====================================================

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:devnest/timer.dart';
 
 class Containt extends StatelessWidget {
   final String currentTaskName;
@@ -133,10 +134,16 @@ class Containt extends StatelessWidget {
                     ),
                     Visibility(
                       visible: !showcont,
+                      child: CountdownWidget(),
+                    ),
+                    Visibility(
+                      visible: !showcont,
                       child: Align(
                           alignment: Alignment.center,
                           child: Text(
-                            "Your Setup env. is now Complete !",
+                            activeContainer == 0 || activeContainer == 1
+                                ? "Section Complete! Forwarding for the Next Step."
+                                : "Setup finished! Let the journey begin.",
                             style: TextStyle(color: Colors.white, fontSize: 26),
                           )),
                     ),

@@ -36,6 +36,13 @@ class _ConterState extends State<Conter> {
     });
   }
 
+  void updateContainerChange(int index) {
+    setState(() {
+      processStatus = "none"; // Reset processStatus
+      widget.onContainerChange(index); // Notify parent about the change
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -78,6 +85,7 @@ class _ConterState extends State<Conter> {
         ),
         SizedBox(height: 32),
         ListTy(
+          updateContainerChange: updateContainerChange,
           activeContainer: widget.activeContainer,
           onProcessStatusChange: handleProcessStatusChange,
         ),
@@ -89,14 +97,14 @@ class _ConterState extends State<Conter> {
     bool isActive = index == widget.activeContainer;
 
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          widget.onContainerChange(index); // Notify parent about the change
-          processStatus = "none"; // Reset processStatus to "none"
-        });
-        // widget.onContainerChange(index); // Notify parent about the change
-        // processStatus="none";
-      },
+      // onTap: () {
+      //   setState(() {
+      //     widget.onContainerChange(index); // Notify parent about the change
+      //     processStatus = "none"; // Reset processStatus to "none"
+      //   });
+      //   // widget.onContainerChange(index); // Notify parent about the change
+      //   // processStatus="none";
+      // },
       child: AnimatedContainer(
         width: 180,
         height: 85,
